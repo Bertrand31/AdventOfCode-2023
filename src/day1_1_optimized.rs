@@ -5,9 +5,9 @@ where
     if idx >= input.len() {
         None
     } else {
-        match input[idx].to_digit(10) {
-            Some(digit) => Some(digit),
-            None => seek_first_digit(input, walk(idx), walk),
+        match input[idx] as i32 - 0x30 {
+            digit if digit < 10 && digit >= 0 => Some(digit as u32),
+            _ => seek_first_digit(input, walk(idx), walk),
         }
     }
 }
