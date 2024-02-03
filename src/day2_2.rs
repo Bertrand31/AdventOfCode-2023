@@ -10,29 +10,16 @@ struct GameSet {
     green: usize,
 }
 
-#[derive(Debug)]
-struct Game {
-    id: usize,
-    sets: Vec<GameSet>,
-}
+struct Game(Vec<GameSet>);
 
-#[derive(Debug)]
 struct GameMax {
-    id: usize,
     max_values: GameSet,
 }
 
 fn parse_line(line: &String) -> Game {
-    let mut split_line = line.split(":");
-    let game_str = split_line.next().unwrap().to_owned();
-    let id = game_str
-        .split(" ")
+    let sets = line
+        .split(":")
         .last()
-        .unwrap()
-        .parse::<usize>()
-        .unwrap();
-    let sets = split_line
-        .next()
         .unwrap()
         .split(";")
         .map(|s| s.trim())
@@ -52,11 +39,11 @@ fn parse_line(line: &String) -> Game {
             }
         })
         .collect::<Vec<GameSet>>();
-    Game { id, sets }
+    Game(sets)
 }
 
 fn collapse_game(game: Game) -> GameMax {
-    let max_set = game.sets.iter().fold(
+    let max_set = game.0.iter().fold(
         GameSet {
             blue: 0,
             red: 0,
@@ -69,25 +56,15 @@ fn collapse_game(game: Game) -> GameMax {
         },
     );
     GameMax {
-        id: game.id,
         max_values: max_set,
     }
 }
 
-pub fn day2_1(input: &Vec<String>) -> usize {
+pub fn day2_2(input: &Vec<String>) -> usize {
     input
         .iter()
         .map(parse_line)
         .map(collapse_game)
-        .filter_map(|g_max| {
-            if g_max.max_values.blue <= 14
-                && g_max.max_values.green <= 13
-                && g_max.max_values.red <= 12
-            {
-                Some(g_max.id)
-            } else {
-                None
-            }
-        })
+        .map(|g_max| g_max.max_values.blue * g_max.max_values.green * g_max.max_values.red)
         .sum()
 }
