@@ -24,14 +24,13 @@ fn parse_line(line: &String) -> Game {
         .split(";")
         .map(|s| s.trim())
         .map(|set_str| {
-            let colours = set_str.split(",").map(|c| c.trim());
-            let pairs = colours.map(|p| {
+            let colour_pairs = set_str.split(",").map(|c| c.trim()).map(|p| {
                 let mut colour = p.split(" ");
                 let value = colour.next().unwrap().parse::<usize>().unwrap();
                 let name = colour.next().unwrap().to_owned();
                 (name, value)
             });
-            let hashmap: HashMap<String, usize, RandomState> = HashMap::from_iter(pairs);
+            let hashmap: HashMap<String, usize, RandomState> = HashMap::from_iter(colour_pairs);
             GameSet {
                 blue: hashmap.get("blue").unwrap_or(&0_usize).to_owned(),
                 red: hashmap.get("red").unwrap_or(&0_usize).to_owned(),
